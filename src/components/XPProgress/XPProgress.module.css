@@ -1,0 +1,135 @@
+.card {
+  background: var(--vl-bg-elevated);
+  border: 1px solid var(--vl-border-subtle);
+  border-radius: var(--vl-radius-lg);
+  padding: 22px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.metricLabel {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--vl-text-secondary);
+  margin-bottom: 4px;
+}
+
+.xpBig {
+  margin: 0;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--vl-text-primary);
+  line-height: 1.15;
+}
+
+.neededBox {
+  text-align: right;
+}
+
+.neededLabel {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--vl-text-muted);
+  margin-bottom: 4px;
+}
+
+.neededValue {
+  display: block;
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--vl-soft-blue);
+}
+
+.barSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.barLabels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.84rem;
+  color: var(--vl-text-secondary);
+}
+
+.percentText {
+  font-weight: 700;
+  color: var(--vl-gold-bright);
+}
+
+.track {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--vl-bg-inset);
+  border: 1px solid var(--vl-border-subtle);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--vl-soft-blue) 0%, var(--vl-gold) 100%);
+  transform-origin: left center;
+  transition: width var(--vl-duration-bar) var(--vl-ease-out);
+}
+
+.transitionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--vl-border-subtle);
+}
+
+.levelStep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--vl-text-primary);
+}
+
+.arrowIcon {
+  color: var(--vl-gold);
+}
+
+.nextTitle {
+  font-size: 0.82rem;
+  color: var(--vl-text-muted);
+}
+
+@media (max-width: 575.98px) {
+  .card {
+    padding: 18px 16px;
+  }
+
+  .xpBig {
+    font-size: 1.5rem;
+  }
+
+  .topRow {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .neededBox {
+    text-align: left;
+  }
+}
