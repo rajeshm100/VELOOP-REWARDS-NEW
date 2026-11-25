@@ -3,7 +3,7 @@
 ## Project Overview
 A fintech-inspired gamified **Level-Up, Rewards, Mini-Game, and Earning Hub** built for VELOOP Rewards (`Task 16`). The dashboard communicates where the user stands, how far they have progressed, what XP is needed next, what reward unlocks next, and actionable ways to keep progressing (`Play -> Earn XP -> Progress -> Unlock Reward -> Level Up -> Discover New Opportunities -> Return`).
 
-> **Demo Data Notice:** All progression metrics, XP history entries, reward amounts, and mini-game payouts are labeled **development/demo data** until connected to live backend APIs.
+> **Demo Data Notice:** All progression metrics, XP history entries, reward amounts, and mini-game payouts are labeled **development/demo data** until connected to live backend APIs. 
 
 ---
 
