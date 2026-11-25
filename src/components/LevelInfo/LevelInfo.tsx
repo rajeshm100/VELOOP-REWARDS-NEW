@@ -10,12 +10,7 @@ interface LevelInfoProps {
   ariaLabel: string;
 }
 
-export const LevelInfo: React.FC<LevelInfoProps> = ({
-  title,
-  description,
-  demoNote,
-  ariaLabel,
-}) => {
+export const LevelInfo: React.FC<LevelInfoProps> = ({ title, description, demoNote, ariaLabel }) => {
   const { isOpen, toggle, close, containerRef } = useDisclosure(false);
 
   return (
@@ -28,19 +23,14 @@ export const LevelInfo: React.FC<LevelInfoProps> = ({
         aria-label={ariaLabel}
         title={title}
       >
-        <Info size={14} strokeWidth={2.2} aria-hidden="true" />
+        <Info size={14} aria-hidden="true" />
       </button>
 
       {isOpen && (
         <div className={styles.popover} role="dialog" aria-label={title}>
           <div className={styles.popoverHeader}>
             <h4 className={styles.popoverTitle}>{title}</h4>
-            <button
-              type="button"
-              className={styles.closeBtn}
-              onClick={close}
-              aria-label="Close information"
-            >
+            <button type="button" className={styles.closeBtn} onClick={close} aria-label="Close">
               <X size={14} aria-hidden="true" />
             </button>
           </div>

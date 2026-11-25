@@ -24,44 +24,33 @@ export const XPProgress: React.FC<XPProgressProps> = ({
   const [mountedPercent, setMountedPercent] = useState(0);
 
   useEffect(() => {
-    const raf = window.requestAnimationFrame(() => {
-      setMountedPercent(progressPercent);
-    });
-
+    const raf = window.requestAnimationFrame(() => setMountedPercent(progressPercent));
     return () => window.cancelAnimationFrame(raf);
   }, [progressPercent]);
 
-  const currentLvlStr = String(currentLevel).padStart(2, '0');
-  const nextLvlStr = String(nextLevel).padStart(2, '0');
+  const curStr = String(currentLevel).padStart(2, '0');
+  const nxtStr = String(nextLevel).padStart(2, '0');
 
   return (
-    <article className={styles.card} aria-label="XP Progression Details">
+    <article className={`vlCard ${styles.card}`} aria-label="XP Progression Details">
       <div className={styles.topRow}>
         <div>
           <span className={styles.metricLabel}>Current XP</span>
-          <p className={`${styles.xpBig} tabularNums`}>
-            {currentXP.toLocaleString()} XP
-          </p>
+          <p className={`${styles.xpBig} tabularNums`}>{currentXP.toLocaleString()} XP</p>
         </div>
 
         <div className={styles.neededBox}>
-          <span className={styles.neededLabel}>XP Needed</span>
+          <span className={styles.metricLabel}>XP Needed</span>
           <span className={`${styles.neededValue} tabularNums`}>
-            {remainingXP > 0
-              ? `${remainingXP.toLocaleString()} XP to Level ${nextLvlStr}`
-              : `Ready for Level ${nextLvlStr}`}
+            {remainingXP > 0 ? `${remainingXP.toLocaleString()} XP to Level ${nxtStr}` : `Ready for Level ${nxtStr}`}
           </span>
         </div>
       </div>
 
-      <div className={styles.barSection}>
+      <div>
         <div className={styles.barLabels}>
-          <span className="tabularNums">
-            {currentXP.toLocaleString()} / {requiredXP.toLocaleString()} XP
-          </span>
-          <span className={`${styles.percentText} tabularNums`}>
-            {progressPercent}%
-          </span>
+          <span className="tabularNums">{currentXP.toLocaleString()} / {requiredXP.toLocaleString()} XP</span>
+          <span className="tabularNums" style={{ fontWeight: 700, color: 'var(--vl-gold-bright)' }}>{progressPercent}%</span>
         </div>
 
         <div
@@ -70,22 +59,19 @@ export const XPProgress: React.FC<XPProgressProps> = ({
           aria-valuenow={progressPercent}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Level ${currentLvlStr} progress: ${progressPercent}%`}
+          aria-label={`Level ${curStr} progress: ${progressPercent}%`}
         >
-          <div
-            className={styles.fill}
-            style={{ width: `${mountedPercent}%` }}
-          />
+          <div className={styles.fill} style={{ width: `${mountedPercent}%` }} />
         </div>
       </div>
 
       <div className={styles.transitionRow}>
-        <div className={styles.levelStep}>
-          <span>Level {currentLvlStr}</span>
-          <ArrowRight size={15} className={styles.arrowIcon} aria-hidden="true" />
-          <span>Next Level {nextLvlStr}</span>
+        <div className="d-flex align-items-center gap-2 fw-semibold">
+          <span>Level {curStr}</span>
+          <ArrowRight size={15} color="var(--vl-gold)" aria-hidden="true" />
+          <span>Next Level {nxtStr}</span>
         </div>
-        <span className={styles.nextTitle}>{nextLevelTitle}</span>
+        <span style={{ color: 'var(--vl-text-muted)' }}>{nextLevelTitle}</span>
       </div>
     </article>
   );

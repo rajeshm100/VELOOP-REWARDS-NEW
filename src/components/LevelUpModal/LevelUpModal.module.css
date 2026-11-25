@@ -10,55 +10,11 @@
 }
 
 .modal {
-  position: relative;
   width: 100%;
-  max-width: 440px;
-  background: linear-gradient(165deg, #222744 0%, #171a2d 100%);
-  border: 1px solid var(--vl-gold);
-  border-radius: var(--vl-radius-xl);
-  padding: 28px 24px;
+  max-width: 430px;
+  border-color: var(--vl-gold);
   text-align: center;
-  box-shadow: 0 28px 64px rgba(4, 6, 14, 0.78);
-  animation: modalReveal 280ms var(--vl-ease-out);
-}
-
-@keyframes modalReveal {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.eyebrow {
-  margin: 0 0 4px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--vl-gold);
-}
-
-.title {
-  margin: 0 0 16px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--vl-text-primary);
-}
-
-.badgeStage {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 14px;
-}
-
-.tierName {
-  margin: 0 0 16px;
-  font-size: 0.96rem;
-  font-weight: 600;
-  color: var(--vl-gold-bright);
+  box-shadow: 0 24px 56px rgba(4, 6, 14, 0.78);
 }
 
 .rewardRow {
@@ -66,60 +22,20 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: var(--vl-radius-md);
   background: var(--vl-bg-inset);
   border: 1px solid var(--vl-border-gold);
-  margin-bottom: 16px;
-}
-
-.rewardText {
-  text-align: left;
-}
-
-.rewardPrimary {
-  display: block;
-  font-size: 1.12rem;
-  font-weight: 700;
-  color: var(--vl-gold-bright);
-}
-
-.rewardSub {
-  display: block;
-  font-size: 0.82rem;
-  color: var(--vl-text-secondary);
+  margin: 14px 0;
 }
 
 .perksList {
   list-style: none;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
   text-align: left;
-}
-
-.perkItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-size: 0.84rem;
-  color: var(--vl-text-primary);
-}
-
-.continueBtn {
-  width: 100%;
-  padding: 12px 20px;
-  border-radius: var(--vl-radius-sm);
-  border: none;
-  background: linear-gradient(135deg, var(--vl-gold) 0%, var(--vl-gold-deep) 100%);
-  color: #111320;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.continueBtn:hover {
-  filter: brightness(1.06);
 }

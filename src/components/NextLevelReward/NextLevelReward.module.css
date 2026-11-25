@@ -1,15 +1,11 @@
 .card {
   background: linear-gradient(155deg, #212642 0%, #191d32 100%);
-  border: 1px solid var(--vl-border-blue);
-  border-radius: var(--vl-radius-lg);
-  padding: 22px 24px;
+  border-color: var(--vl-border-blue);
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 16px;
-  transition: border-color var(--vl-duration-fast) var(--vl-ease-out),
-    transform var(--vl-duration-fast) var(--vl-ease-out);
 }
 
 .card:hover {
@@ -20,13 +16,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-}
-
-.titleGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .eyebrow {
@@ -49,35 +38,18 @@
   gap: 16px;
 }
 
-.chestBox {
-  flex-shrink: 0;
-  transition: transform var(--vl-duration-base) var(--vl-ease-out);
-}
-
-.card:hover .chestBox,
-.chestBoxRevealed {
-  transform: translateY(-2px) scale(1.03);
-}
-
 .rewardAmount {
   margin: 0;
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--vl-gold-bright);
-  line-height: 1.2;
 }
 
 .secondaryReward {
-  margin: 4px 0 6px;
+  margin: 4px 0;
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--vl-subtle-green);
-}
-
-.unlockPrompt {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--vl-text-secondary);
 }
 
 .revealPanel {
@@ -93,37 +65,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
   padding-top: 12px;
   border-top: 1px solid var(--vl-border-subtle);
-}
-
-.progressMini {
   font-size: 0.82rem;
   color: var(--vl-text-secondary);
-}
-
-.previewBtn {
-  background: transparent;
-  border: 1px solid var(--vl-border-medium);
-  border-radius: var(--vl-radius-sm);
-  color: var(--vl-text-primary);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 6px 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: border-color var(--vl-duration-fast) var(--vl-ease-out),
-    background-color var(--vl-duration-fast) var(--vl-ease-out);
-}
-
-.previewBtn:hover {
-  border-color: var(--vl-gold);
-  background: rgba(229, 184, 91, 0.08);
-}
-
-@media (max-width: 575.98px) {
-  .card {
-    padding: 18px 16px;
-  }
 }

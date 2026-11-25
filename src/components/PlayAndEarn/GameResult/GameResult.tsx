@@ -28,79 +28,55 @@ export const GameResult: React.FC<GameResultProps> = ({
   onPlayAgain,
   onResetCap,
   onBackToDashboard,
-}) => {
-  const isFullClear = matchedPairs >= totalPairs;
+}) => (
+  <div className={styles.resultBox} role="region" aria-label="Match Result">
+    <LaurelTrophyIllustration size={78} />
+    <div>
+      <h3 className="m-0 fw-bold" style={{ fontSize: '1.25rem' }}>
+        {matchedPairs >= totalPairs ? 'Challenge Complete' : 'Round Summary'}
+      </h3>
+      <p className="mt-1 mb-0" style={{ fontSize: '0.85rem', color: 'var(--vl-text-secondary)' }}>
+        {earnedReward?.reason ?? 'Match complete.'}
+      </p>
+    </div>
 
-  return (
-    <div className={styles.resultBox} role="region" aria-label="Match Result">
-      <LaurelTrophyIllustration size={84} />
-
-      <div>
-        <h3 className={styles.resultTitle}>
-          {isFullClear ? 'Challenge Complete' : 'Round Summary'}
-        </h3>
-        <p className={styles.resultReason}>
-          {earnedReward?.reason ?? 'Match complete.'}
-        </p>
+    <div className={styles.resultMetrics}>
+      <div className={styles.ruleItem}>
+        <span className={styles.hudLabel}>Round Score</span>
+        <span className={`${styles.hudValue} tabularNums`}>{roundScore}</span>
       </div>
-
-      <div className={styles.resultMetrics}>
-        <div className={styles.resultMetricCard}>
-          <span className={styles.hudLabel}>Round Score</span>
-          <span className={`${styles.hudValue} tabularNums`}>{roundScore}</span>
-        </div>
-
-        <div className={styles.resultMetricCard}>
-          <span className={styles.hudLabel}>Pairs Matched</span>
-          <span className={`${styles.hudValue} tabularNums`}>
-            {matchedPairs} / {totalPairs}
-          </span>
-        </div>
-
-        <div className={styles.resultMetricCard}>
-          <span className={styles.hudLabel}>Moves · Time Left</span>
-          <span className={`${styles.hudValue} tabularNums`}>
-            {movesUsed} · {timeRemaining}s
-          </span>
-        </div>
+      <div className={styles.ruleItem}>
+        <span className={styles.hudLabel}>Pairs Matched</span>
+        <span className={`${styles.hudValue} tabularNums`}>{matchedPairs} / {totalPairs}</span>
       </div>
-
-      <div className={`${styles.rewardCallout} tabularNums`}>
-        {earnedReward && earnedReward.xpEarned > 0
-          ? `Demo Reward Earned: +${earnedReward.xpEarned} XP${earnedReward.veEarned > 0 ? ` & +${earnedReward.veEarned} VEs` : ''}`
-          : 'No demo XP earned this round (match at least 1 pair for +5 XP)'}
-      </div>
-
-      <div className={styles.resultActions}>
-        {roundsRemaining > 0 ? (
-          <button
-            type="button"
-            className={styles.startBtn}
-            onClick={onPlayAgain}
-          >
-            <RotateCcw size={15} aria-hidden="true" />
-            Play Again ({roundsRemaining} left)
-          </button>
-        ) : (
-          <button
-            type="button"
-            className={styles.startBtn}
-            onClick={onResetCap}
-          >
-            <RotateCcw size={15} aria-hidden="true" />
-            Reset Demo Rounds
-          </button>
-        )}
-
-        <button
-          type="button"
-          className={styles.secondaryBtn}
-          onClick={onBackToDashboard}
-        >
-          <ArrowLeft size={15} aria-hidden="true" />
-          Back to Dashboard
-        </button>
+      <div className={styles.ruleItem}>
+        <span className={styles.hudLabel}>Moves · Time Left</span>
+        <span className={`${styles.hudValue} tabularNums`}>{movesUsed} · {timeRemaining}s</span>
       </div>
     </div>
-  );
-};
+
+    <div className={`${styles.rewardCallout} tabularNums`}>
+      {earnedReward && earnedReward.xpEarned > 0
+        ? `Demo Reward Earned: +${earnedReward.xpEarned} XP${earnedReward.veEarned > 0 ? ` & +${earnedReward.veEarned} VEs` : ''}`
+        : 'No demo XP earned this round (match at least 1 pair for +5 XP)'}
+    </div>
+
+    <div className="d-flex flex-wrap justify-content-center gap-2">
+      {roundsRemaining > 0 ? (
+        <button type="button" className="vlBtnGold" onClick={onPlayAgain}>
+          <RotateCcw size={15} aria-hidden="true" />
+          Play Again ({roundsRemaining} left)
+        </button>
+      ) : (
+        <button type="button" className="vlBtnGold" onClick={onResetCap}>
+          <RotateCcw size={15} aria-hidden="true" />
+          Reset Demo Rounds
+        </button>
+      )}
+      <button type="button" className="vlBtnGhost" onClick={onBackToDashboard}>
+        <ArrowLeft size={15} aria-hidden="true" />
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
+);

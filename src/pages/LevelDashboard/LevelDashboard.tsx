@@ -9,10 +9,7 @@ import { NextLevelReward } from '../../components/NextLevelReward/NextLevelRewar
 import { GameContainer } from '../../components/PlayAndEarn/GameContainer/GameContainer';
 import { XPActivity } from '../../components/XPActivity/XPActivity';
 import { XPProgress } from '../../components/XPProgress/XPProgress';
-import {
-  DashboardPreviewMode,
-  useDashboardData,
-} from '../../hooks/useDashboardData';
+import { DashboardPreviewMode, useDashboardData } from '../../hooks/useDashboardData';
 import { useLevelProgress } from '../../hooks/useLevelProgress';
 import styles from './LevelDashboard.module.css';
 
@@ -38,13 +35,13 @@ export const LevelDashboard: React.FC = () => {
     roadmapLevels,
     earningOpportunities,
     activities,
+    lastUnlockedLevel,
     isLoading,
     hasError,
     isGameUnavailable,
     previewMode,
     setPreviewMode,
     levelUpModalOpen,
-    lastUnlockedLevel,
     applyXPGain,
     checkPendingLevelUp,
     confirmLevelUpAdvance,
@@ -53,123 +50,70 @@ export const LevelDashboard: React.FC = () => {
     resetDemoData,
   } = useDashboardData();
 
-  const { remainingXP, progressPercent, recommendationTip } =
-    useLevelProgress(progression);
-
+  const { remainingXP, progressPercent, recommendationTip } = useLevelProgress(progression);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!mobileMenuOpen) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('resize', handleResize);
-
+    if (!mobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileMenuOpen(false); };
+    const onResize = () => { if (window.innerWidth >= 768) setMobileMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', onResize);
     };
   }, [mobileMenuOpen]);
 
   const scrollToSection = useCallback((sectionId: string) => {
     setMobileMenuOpen(false);
     const el = document.getElementById(sectionId);
-    if (!el) {
-      return;
-    }
-
-    const headerHeight = headerRef.current?.offsetHeight ?? 60;
-    const extraBreathingSpace = 20;
-    const targetTop =
-      el.getBoundingClientRect().top + window.scrollY - headerHeight - extraBreathingSpace;
-
+    if (!el) return;
+    const offset = (headerRef.current?.offsetHeight ?? 60) + 20;
     window.scrollTo({
-      top: Math.max(0, targetTop),
+      top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset),
       behavior: 'smooth',
     });
   }, []);
 
-  const handleNavLinkClick = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-      event.preventDefault();
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
       scrollToSection(sectionId);
     },
     [scrollToSection]
   );
 
-  const handleGameReward = useCallback(
-    (xp: number, title: string, veEarned: number) => {
-      applyXPGain(xp, title, 'Games', veEarned, { deferLevelUpModal: true });
-    },
-    [applyXPGain]
-  );
-
-  const handleBackFromGame = useCallback(() => {
-    scrollToSection('overview');
-    checkPendingLevelUp();
-  }, [scrollToSection, checkPendingLevelUp]);
-
   return (
     <div className={styles.pageShell}>
       <header ref={headerRef} className={styles.topBar}>
         <div className={`container-xxl ${styles.topBarInner}`}>
-          <a
-            href="#overview"
-            className={styles.brandMark}
-            onClick={(e) => handleNavLinkClick(e, 'overview')}
-          >
+          <a href="#overview" className={styles.brandMark} onClick={(e) => handleNavClick(e, 'overview')}>
             VELOOP Rewards
           </a>
 
           <nav className={styles.navLinks} aria-label="Dashboard sections">
             {NAV_ITEMS.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className={styles.navLink}
-                onClick={(e) => handleNavLinkClick(e, item.id)}
-              >
+              <a key={item.id} href={`#${item.id}`} className={styles.navLink} onClick={(e) => handleNavClick(e, item.id)}>
                 {item.label}
               </a>
             ))}
           </nav>
 
-          <div className={styles.topBarActions}>
-            <button
-              type="button"
-              className={styles.topCta}
-              onClick={() => scrollToSection('play-and-earn')}
-            >
+          <div className="d-flex align-items-center gap-2 flex-shrink-0">
+            <button type="button" className={`vlBtnGold ${styles.topCta}`} onClick={() => scrollToSection('play-and-earn')}>
               Play &amp; Earn
             </button>
-
             <button
               type="button"
               className={styles.hamburgerBtn}
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              onClick={() => setMobileMenuOpen((p) => !p)}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav-drawer"
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
-              {mobileMenuOpen ? (
-                <X size={20} aria-hidden="true" />
-              ) : (
-                <Menu size={20} aria-hidden="true" />
-              )}
+              {mobileMenuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -177,36 +121,19 @@ export const LevelDashboard: React.FC = () => {
 
       {mobileMenuOpen && (
         <>
-          <div
-            className={styles.mobileBackdrop}
-            onClick={() => setMobileMenuOpen(false)}
-            aria-hidden="true"
-          />
-          <nav
-            id="mobile-nav-drawer"
-            className={styles.mobileDrawer}
-            aria-label="Mobile navigation"
-          >
-            <ul className={styles.mobileNavList}>
+          <div className={styles.mobileBackdrop} onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
+          <nav id="mobile-nav-drawer" className={styles.mobileDrawer} aria-label="Mobile navigation">
+            <ul className="list-unstyled m-0 p-0 d-flex flex-column gap-1">
               {NAV_ITEMS.map((item) => (
                 <li key={item.id}>
-                  <a
-                    href={`#${item.id}`}
-                    className={styles.mobileNavLink}
-                    onClick={(e) => handleNavLinkClick(e, item.id)}
-                  >
+                  <a href={`#${item.id}`} className={styles.mobileNavLink} onClick={(e) => handleNavClick(e, item.id)}>
                     <span>{item.label}</span>
                     <ChevronRight size={16} color="var(--vl-text-muted)" aria-hidden="true" />
                   </a>
                 </li>
               ))}
             </ul>
-
-            <button
-              type="button"
-              className={styles.mobileDrawerCta}
-              onClick={() => scrollToSection('play-and-earn')}
-            >
+            <button type="button" className="vlBtnGold w-100 mt-3" onClick={() => scrollToSection('play-and-earn')}>
               Play Memory Match
             </button>
           </nav>
@@ -215,63 +142,31 @@ export const LevelDashboard: React.FC = () => {
 
       <main id="overview" className={`container-xxl ${styles.mainContent}`}>
         {hasError ? (
-          <div className={styles.errorBox} role="alert">
-            <AlertTriangle size={36} color="var(--vl-error)" aria-hidden="true" />
-            <h1 className={styles.errorTitle}>Unable to Load Level Progress</h1>
-            <p className={styles.errorMsg}>
-              We couldn&apos;t load your level information right now. Please check your connection and try again.
+          <div className={`vlCard ${styles.errorBox}`} role="alert">
+            <AlertTriangle size={34} color="var(--vl-error)" aria-hidden="true" />
+            <h1 className="m-0 fw-bold" style={{ fontSize: '1.3rem' }}>Unable to Load Level Progress</h1>
+            <p className="m-0" style={{ fontSize: '0.9rem', color: 'var(--vl-text-secondary)' }}>
+              We couldn&apos;t load your level information right now. Please try again.
             </p>
-            <button
-              type="button"
-              className={styles.retryBtn}
-              onClick={retryLoad}
-            >
+            <button type="button" className="vlBtnGold mt-2" onClick={retryLoad}>
               <RefreshCw size={16} aria-hidden="true" />
               Try Again
             </button>
           </div>
         ) : isLoading ? (
-          <div className={styles.stackSection} aria-busy="true" aria-label="Loading Level Dashboard">
-            <div className={styles.skeletonCard}>
-              <div className={styles.skeletonBar} style={{ width: '38%', height: 26, marginBottom: 14 }} />
-              <div className={styles.skeletonBar} style={{ width: '65%', height: 16, marginBottom: 10 }} />
-              <div className={styles.skeletonBar} style={{ width: '50%', height: 16 }} />
-            </div>
-
+          <div className="d-flex flex-column gap-4" aria-busy="true" aria-label="Loading Level Dashboard">
+            <div className="vlCard"><div className={styles.skeletonBar} style={{ width: '55%', height: 74 }} /></div>
             <div className="row g-4">
-              {[1, 2, 3].map((idx) => (
-                <div key={idx} className="col-12 col-md-6 col-xl-4">
-                  <div className={styles.skeletonCard}>
-                    <div className={styles.skeletonBar} style={{ width: '42%', height: 16, marginBottom: 18 }} />
-                    <div className={styles.skeletonBar} style={{ width: '75%', height: 34, marginBottom: 14 }} />
-                    <div className={styles.skeletonBar} style={{ width: '100%', height: 12 }} />
-                  </div>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="col-12 col-md-6 col-xl-4">
+                  <div className="vlCard"><div className={styles.skeletonBar} style={{ width: '100%', height: 96 }} /></div>
                 </div>
               ))}
             </div>
-
-            <div className={styles.skeletonCard}>
-              <div className={styles.skeletonBar} style={{ width: '30%', height: 22, marginBottom: 16 }} />
-              <div className={styles.skeletonBar} style={{ width: '100%', height: 120 }} />
-            </div>
-
-            <div className="row g-4">
-              <div className="col-12 col-lg-7">
-                <div className={styles.skeletonCard}>
-                  <div className={styles.skeletonBar} style={{ width: '40%', height: 22, marginBottom: 16 }} />
-                  <div className={styles.skeletonBar} style={{ width: '100%', height: 240 }} />
-                </div>
-              </div>
-              <div className="col-12 col-lg-5">
-                <div className={styles.skeletonCard}>
-                  <div className={styles.skeletonBar} style={{ width: '40%', height: 22, marginBottom: 16 }} />
-                  <div className={styles.skeletonBar} style={{ width: '100%', height: 240 }} />
-                </div>
-              </div>
-            </div>
+            <div className="vlCard"><div className={styles.skeletonBar} style={{ width: '100%', height: 140 }} /></div>
           </div>
         ) : (
-          <div className={styles.stackSection}>
+          <div className="d-flex flex-column gap-4">
             <LevelHero
               progression={progression}
               recommendationTip={recommendationTip}
@@ -289,7 +184,6 @@ export const LevelDashboard: React.FC = () => {
                   isDemo={progression.isDemo}
                 />
               </div>
-
               <div className="col-12 col-md-6 col-xl-4">
                 <XPProgress
                   currentLevel={progression.currentLevel}
@@ -301,7 +195,6 @@ export const LevelDashboard: React.FC = () => {
                   progressPercent={progressPercent}
                 />
               </div>
-
               <div className="col-12 col-md-12 col-xl-4">
                 <NextLevelReward
                   nextLevel={progression.nextLevel}
@@ -313,20 +206,19 @@ export const LevelDashboard: React.FC = () => {
               </div>
             </div>
 
-            <LevelRoadmap
-              levels={roadmapLevels}
-              currentLevel={progression.currentLevel}
-            />
+            <LevelRoadmap levels={roadmapLevels} currentLevel={progression.currentLevel} />
 
             <div className="row g-4 align-items-stretch">
               <div className="col-12 col-xl-7">
                 <GameContainer
                   isUnavailable={isGameUnavailable}
-                  onAwardXP={handleGameReward}
-                  onBackToOverview={handleBackFromGame}
+                  onAwardXP={(xp, title, ve) => applyXPGain(xp, title, 'Games', ve, true)}
+                  onBackToOverview={() => {
+                    scrollToSection('overview');
+                    checkPendingLevelUp();
+                  }}
                 />
               </div>
-
               <div className="col-12 col-xl-5">
                 <XPActivity
                   activities={activities}
@@ -349,39 +241,23 @@ export const LevelDashboard: React.FC = () => {
       </main>
 
       <footer className={styles.footer}>
-        <div className={`container-xxl ${styles.footerInner}`}>
-          <span className={styles.footerNote}>
-            VELOOP Rewards · Route /Lvl-Dashboard · All values shown are development/demo data
+        <div className="container-xxl d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <span style={{ fontSize: '0.8rem', color: 'var(--vl-text-muted)' }}>
+            VELOOP Rewards · /Lvl-Dashboard · Development/demo data
           </span>
-
-          <div className={styles.stateBar} aria-label="Demo UX state preview controls">
-            <span className={styles.stateLabel}>View State:</span>
+          <div className="d-flex flex-wrap align-items-center gap-2" aria-label="Demo UX state preview controls">
             {PREVIEW_OPTIONS.map((opt) => (
               <button
                 key={opt.id}
                 type="button"
-                className={`${styles.stateBtn} ${
-                  previewMode === opt.id ? styles.stateBtnActive : ''
-                }`}
+                className={`${styles.stateBtn} ${previewMode === opt.id ? styles.stateBtnActive : ''}`}
                 onClick={() => setPreviewMode(opt.id)}
               >
                 {opt.label}
               </button>
             ))}
-            <button
-              type="button"
-              className={styles.stateBtn}
-              onClick={triggerDemoLevelUp}
-            >
-              Test Level-Up
-            </button>
-            <button
-              type="button"
-              className={styles.stateBtn}
-              onClick={resetDemoData}
-            >
-              Reset Demo
-            </button>
+            <button type="button" className={styles.stateBtn} onClick={triggerDemoLevelUp}>Test Level-Up</button>
+            <button type="button" className={styles.stateBtn} onClick={resetDemoData}>Reset Demo</button>
           </div>
         </div>
       </footer>

@@ -1,85 +1,42 @@
 import React from 'react';
-import {
-  ArrowRight,
-  CheckSquare,
-  Flame,
-  Gamepad2,
-  Gift,
-  Sparkles,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, CheckSquare, Flame, Gamepad2, Gift, Sparkles, Users } from 'lucide-react';
 import { ActivityCategory, XPActivityItem } from '../../data/levelDashboardData';
-import {
-  ACTIVITY_FILTER_OPTIONS,
-  useActivityFilter,
-} from '../../hooks/useActivityFilter';
+import { ACTIVITY_FILTER_OPTIONS, useActivityFilter } from '../../hooks/useActivityFilter';
 import styles from './XPActivity.module.css';
 
-interface XPActivityProps {
+const CATEGORY_ICONS: Record<ActivityCategory, React.ReactNode> = {
+  Tasks: <CheckSquare size={15} aria-hidden="true" />,
+  Referrals: <Users size={15} aria-hidden="true" />,
+  Games: <Gamepad2 size={15} aria-hidden="true" />,
+  Streaks: <Flame size={15} aria-hidden="true" />,
+  'Daily Bonuses': <Gift size={15} aria-hidden="true" />,
+  Challenges: <Sparkles size={15} aria-hidden="true" />,
+};
+
+export const XPActivity: React.FC<{
   activities: XPActivityItem[];
   xpEarnedToday: number;
   vesEarnedToday: number;
   onStartEarning: () => void;
-}
-
-function getCategoryIcon(category: ActivityCategory) {
-  switch (category) {
-    case 'Tasks':
-      return <CheckSquare size={15} aria-hidden="true" />;
-    case 'Referrals':
-      return <Users size={15} aria-hidden="true" />;
-    case 'Games':
-      return <Gamepad2 size={15} aria-hidden="true" />;
-    case 'Streaks':
-      return <Flame size={15} aria-hidden="true" />;
-    case 'Daily Bonuses':
-      return <Gift size={15} aria-hidden="true" />;
-    case 'Challenges':
-      return <Sparkles size={15} aria-hidden="true" />;
-  }
-}
-
-export const XPActivity: React.FC<XPActivityProps> = ({
-  activities,
-  xpEarnedToday,
-  vesEarnedToday,
-  onStartEarning,
-}) => {
-  const { selectedCategory, setSelectedCategory, filteredActivities } =
-    useActivityFilter(activities);
+}> = ({ activities, xpEarnedToday, vesEarnedToday, onStartEarning }) => {
+  const { selectedCategory, setSelectedCategory, filteredActivities } = useActivityFilter(activities);
 
   return (
-    <section
-      id="activity"
-      className={styles.card}
-      aria-labelledby="activity-heading"
-    >
+    <section id="activity" className={`vlCard ${styles.card}`} aria-labelledby="activity-heading">
       <div>
-        <div className={styles.header}>
-          <div>
-            <h2 id="activity-heading" className={styles.title}>
-              Recent XP Activity
-            </h2>
-            <p className={styles.subtitle}>
-              Verified XP sources across sessions · Demo history
-            </p>
-          </div>
-        </div>
+        <h2 id="activity-heading" className="m-0 fw-bold" style={{ fontSize: '1.2rem' }}>Recent XP Activity</h2>
+        <p className="mt-1 mb-3" style={{ fontSize: '0.82rem', color: 'var(--vl-text-muted)' }}>
+          XP sources across sessions · Demo history
+        </p>
 
-        <div
-          className={`${styles.filterRow} mt-3`}
-          role="tablist"
-          aria-label="Filter XP activity by source"
-        >
+        <div className={styles.filterRow} role="tablist" aria-label="Filter XP activity">
           {ACTIVITY_FILTER_OPTIONS.map((category) => (
             <button
               key={category}
               type="button"
               role="tab"
               aria-selected={selectedCategory === category}
-              className={`${styles.filterBtn} ${
-                selectedCategory === category ? styles.filterBtnActive : ''
-              }`}
+              className={`${styles.filterBtn} ${selectedCategory === category ? styles.filterBtnActive : ''}`}
               onClick={() => setSelectedCategory(category)}
             >
               {category}
@@ -90,17 +47,13 @@ export const XPActivity: React.FC<XPActivityProps> = ({
 
       {filteredActivities.length === 0 ? (
         <div className={styles.emptyState}>
-          <p className={styles.emptyTitle}>Your XP journey starts here</p>
-          <p className={styles.emptyText}>
+          <p className="m-0 fw-bold">Your XP journey starts here</p>
+          <p className="m-0" style={{ fontSize: '0.84rem', color: 'var(--vl-text-secondary)' }}>
             {activities.length === 0
               ? 'Complete a mini-game round or daily task to log your first XP gain.'
-              : `No recent entries recorded under ${selectedCategory} yet.`}
+              : `No recent entries under ${selectedCategory}.`}
           </p>
-          <button
-            type="button"
-            className={styles.emptyCta}
-            onClick={onStartEarning}
-          >
+          <button type="button" className="vlBtnGold" onClick={onStartEarning}>
             Start Earning XP
             <ArrowRight size={15} aria-hidden="true" />
           </button>
@@ -109,24 +62,22 @@ export const XPActivity: React.FC<XPActivityProps> = ({
         <ul className={styles.list}>
           {filteredActivities.map((item) => (
             <li key={item.id} className={styles.item}>
-              <div className={styles.itemLeft}>
-                <span className={styles.itemIcon}>
-                  {getCategoryIcon(item.category)}
-                </span>
+              <div className="d-flex align-items-center gap-2" style={{ minWidth: 0 }}>
+                <span className={styles.itemIcon}>{CATEGORY_ICONS[item.category]}</span>
                 <div style={{ minWidth: 0 }}>
-                  <p className={styles.itemTitle}>{item.title}</p>
-                  <p className={styles.itemMeta}>
+                  <p className="m-0 fw-semibold text-truncate" style={{ fontSize: '0.85rem' }}>{item.title}</p>
+                  <p className="m-0" style={{ fontSize: '0.74rem', color: 'var(--vl-text-muted)' }}>
                     {item.category} · {item.timestamp}
                   </p>
                 </div>
               </div>
 
-              <div className={styles.itemReward}>
-                <span className={`${styles.xpGain} tabularNums`}>
+              <div className="text-end flex-shrink-0">
+                <span className="d-block fw-bold tabularNums" style={{ fontSize: '0.85rem', color: 'var(--vl-subtle-green)' }}>
                   +{item.xpAmount} XP
                 </span>
                 {item.veAmount && item.veAmount > 0 && (
-                  <span className={`${styles.veGain} tabularNums`}>
+                  <span className="d-block tabularNums" style={{ fontSize: '0.74rem', color: 'var(--vl-gold)' }}>
                     +{item.veAmount} VEs
                   </span>
                 )}
@@ -138,21 +89,14 @@ export const XPActivity: React.FC<XPActivityProps> = ({
 
       <div className={styles.summaryFooter}>
         <div className={styles.summaryBox}>
-          <span className={styles.summaryLabel}>Today&apos;s XP Total</span>
-          <span
-            className={`${styles.summaryValue} tabularNums`}
-            style={{ color: 'var(--vl-muted-purple)' }}
-          >
+          <span style={{ fontSize: '0.72rem', color: 'var(--vl-text-muted)' }}>Today&apos;s XP Total</span>
+          <span className="d-block fw-bold tabularNums" style={{ color: 'var(--vl-muted-purple)' }}>
             {xpEarnedToday} XP
           </span>
         </div>
-
         <div className={styles.summaryBox}>
-          <span className={styles.summaryLabel}>Today&apos;s VEs Earned</span>
-          <span
-            className={`${styles.summaryValue} tabularNums`}
-            style={{ color: 'var(--vl-gold-bright)' }}
-          >
+          <span style={{ fontSize: '0.72rem', color: 'var(--vl-text-muted)' }}>Today&apos;s VEs Earned</span>
+          <span className="d-block fw-bold tabularNums" style={{ color: 'var(--vl-gold-bright)' }}>
             {vesEarnedToday} VEs
           </span>
         </div>

@@ -10,80 +10,43 @@ import {
   XPActivityItem,
 } from '../data/levelDashboardData';
 
-export type DashboardPreviewMode =
-  | 'normal'
-  | 'loading'
-  | 'empty'
-  | 'error'
-  | 'game_unavailable';
+export type DashboardPreviewMode = 'normal' | 'loading' | 'empty' | 'error' | 'game_unavailable';
 
 export function useDashboardData() {
   const [previewMode, setPreviewMode] = useState<DashboardPreviewMode>('normal');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
-  const [progression, setProgression] = useState<LevelProgressionConfig>(
-    INITIAL_PROGRESSION_DATA
-  );
-  const [roadmapLevels, setRoadmapLevels] = useState<RoadmapLevelItem[]>(
-    INITIAL_ROADMAP_LEVELS
-  );
-  const [activities, setActivities] = useState<XPActivityItem[]>(
-    INITIAL_XP_ACTIVITY
-  );
-
+  const [progression, setProgression] = useState<LevelProgressionConfig>(INITIAL_PROGRESSION_DATA);
+  const [roadmapLevels, setRoadmapLevels] = useState<RoadmapLevelItem[]>(INITIAL_ROADMAP_LEVELS);
+  const [activities, setActivities] = useState<XPActivityItem[]>(INITIAL_XP_ACTIVITY);
   const [levelUpModalOpen, setLevelUpModalOpen] = useState(false);
-  const [lastUnlockedLevel, setLastUnlockedLevel] = useState<RoadmapLevelItem | null>(
-    null
-  );
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setIsInitialLoading(false);
-    }, 320);
-
+    const timer = window.setTimeout(() => setIsInitialLoading(false), 300);
     return () => window.clearTimeout(timer);
   }, []);
 
-  const isLoading = isInitialLoading || previewMode === 'loading';
-  const hasError = previewMode === 'error';
-  const isEmptyActivity = previewMode === 'empty';
-  const isGameUnavailable = previewMode === 'game_unavailable';
-
   const applyXPGain = useCallback(
-    (
-      xpGain: number,
-      title: string,
-      category: ActivityCategory,
-      veGain = 0,
-      options?: { deferLevelUpModal?: boolean }
-    ) => {
-      if (xpGain <= 0 && veGain <= 0) {
-        return;
-      }
+    (xpGain: number, title: string, category: ActivityCategory, veGain = 0, deferModal = false) => {
+      if (xpGain <= 0 && veGain <= 0) return;
 
-      const newActivity: XPActivityItem = {
-        id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        title,
-        category,
-        xpAmount: xpGain,
-        veAmount: veGain > 0 ? veGain : undefined,
-        timestamp: 'Just now',
-        isDemo: true,
-      };
-
-      setActivities((prev) => [newActivity, ...prev]);
+      setActivities((prev) => [
+        {
+          id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          title,
+          category,
+          xpAmount: xpGain,
+          veAmount: veGain > 0 ? veGain : undefined,
+          timestamp: 'Just now',
+          isDemo: true,
+        },
+        ...prev,
+      ]);
 
       setProgression((prev) => {
         const updatedXP = prev.currentXP + xpGain;
-        const leveledUp = updatedXP >= prev.requiredXP;
-
-        if (leveledUp && !options?.deferLevelUpModal) {
-          const nextTier =
-            roadmapLevels.find((lvl) => lvl.level === prev.nextLevel) ?? null;
-          setLastUnlockedLevel(nextTier);
+        if (updatedXP >= prev.requiredXP && !deferModal) {
           setLevelUpModalOpen(true);
         }
-
         return {
           ...prev,
           currentXP: updatedXP,
@@ -95,84 +58,55 @@ export function useDashboardData() {
         };
       });
     },
-    [roadmapLevels]
+    []
   );
 
   const checkPendingLevelUp = useCallback(() => {
     if (progression.currentXP >= progression.requiredXP) {
-      const nextTier =
-        roadmapLevels.find((lvl) => lvl.level === progression.nextLevel) ?? null;
-      setLastUnlockedLevel(nextTier);
       setLevelUpModalOpen(true);
     }
-  }, [progression, roadmapLevels]);
+  }, [progression.currentXP, progression.requiredXP]);
 
   const confirmLevelUpAdvance = useCallback(() => {
     setLevelUpModalOpen(false);
-
     setProgression((prev) => {
-      if (prev.currentXP < prev.requiredXP) {
-        return prev;
-      }
+      if (prev.currentXP < prev.requiredXP) return prev;
+      const promoted = prev.nextLevel;
+      const upcoming = promoted + 1;
+      const promotedTier = roadmapLevels.find((l) => l.level === promoted);
+      const nextTier = roadmapLevels.find((l) => l.level === upcoming);
 
-      const promotedLevel = prev.nextLevel;
-      const upcomingLevel = promotedLevel + 1;
-      const nextRoadmapTier = roadmapLevels.find(
-        (item) => item.level === upcomingLevel
-      );
-      const promotedTier = roadmapLevels.find(
-        (item) => item.level === promotedLevel
-      );
-
-      setRoadmapLevels((currLevels) =>
-        currLevels.map((lvl) => {
-          if (lvl.level < promotedLevel) {
-            return { ...lvl, status: 'completed' };
-          }
-          if (lvl.level === promotedLevel) {
-            return { ...lvl, status: 'current' };
-          }
-          if (lvl.level === upcomingLevel) {
-            return { ...lvl, status: 'next' };
-          }
-          return { ...lvl, status: 'locked' };
-        })
+      setRoadmapLevels((curr) =>
+        curr.map((l) => ({
+          ...l,
+          status: l.level < promoted ? 'completed' : l.level === promoted ? 'current' : l.level === upcoming ? 'next' : 'locked',
+        }))
       );
 
       return {
         ...prev,
-        currentLevel: promotedLevel,
+        currentLevel: promoted,
         levelTitle: promotedTier?.title ?? prev.nextLevelTitle,
-        nextLevel: upcomingLevel,
-        nextLevelTitle: nextRoadmapTier?.title ?? `Tier ${upcomingLevel}`,
-        requiredXP: nextRoadmapTier?.requiredXP ?? prev.requiredXP + 3500,
-        nextLevelReward: nextRoadmapTier?.reward ?? {
-          type: 'VEs',
-          amount: 850,
-        },
+        nextLevel: upcoming,
+        nextLevelTitle: nextTier?.title ?? `Tier ${upcoming}`,
+        requiredXP: nextTier?.requiredXP ?? prev.requiredXP + 3500,
+        nextLevelReward: nextTier?.reward ?? { type: 'VEs', amount: 850 },
       };
     });
   }, [roadmapLevels]);
 
   const triggerDemoLevelUp = useCallback(() => {
     const needed = Math.max(0, progression.requiredXP - progression.currentXP);
-    const grant = needed > 0 ? needed : 0;
-
-    if (grant > 0) {
-      applyXPGain(grant, 'Demo Tier Milestone Grant', 'Challenges', 0);
+    if (needed > 0) {
+      applyXPGain(needed, 'Demo Tier Milestone Grant', 'Challenges');
     } else {
-      const nextTier =
-        roadmapLevels.find((lvl) => lvl.level === progression.nextLevel) ?? null;
-      setLastUnlockedLevel(nextTier);
       setLevelUpModalOpen(true);
     }
-  }, [progression, roadmapLevels, applyXPGain]);
+  }, [progression.requiredXP, progression.currentXP, applyXPGain]);
 
   const retryLoad = useCallback(() => {
     setPreviewMode('loading');
-    window.setTimeout(() => {
-      setPreviewMode('normal');
-    }, 360);
+    window.setTimeout(() => setPreviewMode('normal'), 320);
   }, []);
 
   const resetDemoData = useCallback(() => {
@@ -187,15 +121,14 @@ export function useDashboardData() {
     progression,
     roadmapLevels,
     earningOpportunities: EARNING_OPPORTUNITIES,
-    activities: isEmptyActivity ? [] : activities,
-    isLoading,
-    hasError,
-    isGameUnavailable,
+    activities: previewMode === 'empty' ? [] : activities,
+    lastUnlockedLevel: roadmapLevels.find((l) => l.level === progression.nextLevel) ?? null,
+    isLoading: isInitialLoading || previewMode === 'loading',
+    hasError: previewMode === 'error',
+    isGameUnavailable: previewMode === 'game_unavailable',
     previewMode,
     setPreviewMode,
     levelUpModalOpen,
-    setLevelUpModalOpen,
-    lastUnlockedLevel,
     applyXPGain,
     checkPendingLevelUp,
     confirmLevelUpAdvance,

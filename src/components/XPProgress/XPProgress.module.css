@@ -1,8 +1,4 @@
 .card {
-  background: var(--vl-bg-elevated);
-  border: 1px solid var(--vl-border-subtle);
-  border-radius: var(--vl-radius-lg);
-  padding: 22px 24px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -12,9 +8,8 @@
 
 .topRow {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
 }
 
 .metricLabel {
@@ -22,14 +17,12 @@
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--vl-text-secondary);
-  margin-bottom: 4px;
 }
 
 .xpBig {
-  margin: 0;
-  font-size: 1.85rem;
+  margin: 4px 0 0;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: var(--vl-text-primary);
   line-height: 1.15;
 }
 
@@ -37,38 +30,20 @@
   text-align: right;
 }
 
-.neededLabel {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--vl-text-muted);
-  margin-bottom: 4px;
-}
-
 .neededValue {
   display: block;
-  font-size: 1.12rem;
+  margin-top: 4px;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--vl-soft-blue);
 }
 
-.barSection {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .barLabels {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
   font-size: 0.84rem;
   color: var(--vl-text-secondary);
-}
-
-.percentText {
-  font-weight: 700;
-  color: var(--vl-gold-bright);
+  margin-bottom: 8px;
 }
 
 .track {
@@ -84,52 +59,29 @@
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--vl-soft-blue) 0%, var(--vl-gold) 100%);
-  transform-origin: left center;
-  transition: width var(--vl-duration-bar) var(--vl-ease-out);
+  transition: width 680ms var(--vl-ease-out);
 }
 
 .transitionRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--vl-border-subtle);
-}
-
-.levelStep {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--vl-text-primary);
-}
-
-.arrowIcon {
-  color: var(--vl-gold);
-}
-
-.nextTitle {
-  font-size: 0.82rem;
-  color: var(--vl-text-muted);
+  font-size: 0.84rem;
 }
 
 @media (max-width: 575.98px) {
-  .card {
-    padding: 18px 16px;
-  }
-
-  .xpBig {
-    font-size: 1.5rem;
-  }
-
   .topRow {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .neededBox {
     text-align: left;
+  }
+
+  .xpBig {
+    font-size: 1.5rem;
   }
 }

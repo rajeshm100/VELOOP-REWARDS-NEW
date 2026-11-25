@@ -1,55 +1,33 @@
 :root {
-  /* Core Background & Surface Hierarchy */
   --vl-bg-canvas: #161827;
   --vl-bg-elevated: #1c1f33;
   --vl-bg-surface: #21253c;
   --vl-bg-surface-hover: #272c46;
   --vl-bg-inset: #131523;
 
-  /* Hairline Borders */
   --vl-border-subtle: rgba(226, 232, 240, 0.08);
   --vl-border-medium: rgba(226, 232, 240, 0.14);
   --vl-border-gold: rgba(229, 184, 91, 0.38);
   --vl-border-blue: rgba(96, 165, 250, 0.35);
 
-  /* Typography Colors */
   --vl-text-primary: #f8fafc;
   --vl-text-secondary: #b4bed2;
   --vl-text-muted: #7f8ca6;
 
-  /* Strategic Accent & Semantic Palette */
   --vl-gold: #e5b85b;
   --vl-gold-bright: #f5d380;
   --vl-gold-deep: #b8872d;
   --vl-gold-tint: rgba(229, 184, 91, 0.12);
-
-  --vl-silver: #c4cad8;
   --vl-soft-blue: #60a5fa;
-  --vl-soft-blue-tint: rgba(96, 165, 250, 0.12);
-
   --vl-muted-purple: #9f8fef;
-  --vl-muted-purple-tint: rgba(159, 143, 239, 0.14);
-
   --vl-subtle-green: #34d399;
-  --vl-subtle-green-tint: rgba(52, 211, 153, 0.12);
-
-  --vl-warm-yellow: #facc15;
   --vl-error: #f87171;
-  --vl-error-tint: rgba(248, 113, 113, 0.12);
 
-  /* Typography */
   --vl-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --vl-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* Radius Scale */
   --vl-radius-sm: 8px;
   --vl-radius-md: 12px;
   --vl-radius-lg: 16px;
-  --vl-radius-xl: 20px;
-
-  /* Motion */
   --vl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --vl-duration-fast: 160ms;
-  --vl-duration-base: 240ms;
-  --vl-duration-bar: 680ms;
 }

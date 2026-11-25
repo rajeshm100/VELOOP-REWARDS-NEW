@@ -17,46 +17,38 @@ export const CurrentLevel: React.FC<CurrentLevelProps> = ({
   currentXP,
   progressPercent,
   isDemo,
-}) => {
-  const formattedLevel = String(currentLevel).padStart(2, '0');
-
-  return (
-    <article className={styles.card} aria-label="Current Level Status">
-      <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <span className={styles.eyebrow}>Current Level</span>
-          <span aria-hidden="true" style={{ color: 'var(--vl-text-muted)' }}>·</span>
-          <span className={styles.hereText}>You are here</span>
-        </div>
-
-        <LevelInfo
-          title="Level Information"
-          ariaLabel="About VELOOP Level System"
-          description="XP helps you progress through VELOOP Rewards levels. As you reach new levels, you may unlock additional rewards and experiences according to the platform's level system."
-          demoNote={isDemo ? 'Currently displaying development/demo progression values.' : undefined}
-        />
+}) => (
+  <article className={`vlCard ${styles.card}`} aria-label="Current Level Status">
+    <div className={styles.header}>
+      <div className="d-flex align-items-center gap-2">
+        <span className={styles.eyebrow}>Current Level</span>
+        <span aria-hidden="true" style={{ color: 'var(--vl-text-muted)' }}>·</span>
+        <span className={styles.hereText}>You are here</span>
       </div>
 
-      <div className={styles.body}>
-        <div className={styles.badgeWrap}>
-          <HexLevelBadge level={currentLevel} size={96} variant="current" withLaurel />
-        </div>
+      <LevelInfo
+        title="Level Information"
+        ariaLabel="About VELOOP Level System"
+        description="XP helps you progress through VELOOP Rewards levels. As you reach new levels, you unlock additional rewards and experiences."
+        demoNote={isDemo ? 'Displaying development/demo progression values.' : undefined}
+      />
+    </div>
 
-        <div className={styles.details}>
-          <h2 className={styles.levelNumber}>Level {formattedLevel}</h2>
-          <p className={styles.levelName}>{levelTitle}</p>
-          <p className={styles.metaLine}>
-            <span className="tabularNums">{currentXP.toLocaleString()} XP</span>
-            <span aria-hidden="true"> · </span>
-            <span className="tabularNums">{progressPercent}%</span> tier progress
-          </p>
-        </div>
+    <div className={styles.body}>
+      <HexLevelBadge level={currentLevel} size={92} variant="current" withLaurel />
+      <div>
+        <h2 className={styles.levelNumber}>Level {String(currentLevel).padStart(2, '0')}</h2>
+        <p className={styles.levelName}>{levelTitle}</p>
+        <p className={styles.metaLine}>
+          <span className="tabularNums">{currentXP.toLocaleString()} XP</span> ·{' '}
+          <span className="tabularNums">{progressPercent}%</span> tier progress
+        </p>
       </div>
+    </div>
 
-      <div className={styles.footerNote}>
-        <span>Tier Standing</span>
-        <span>Active Milestone{isDemo ? ' · Demo' : ''}</span>
-      </div>
-    </article>
-  );
-};
+    <div className={styles.footerNote}>
+      <span>Tier Standing</span>
+      <span>Active Milestone{isDemo ? ' · Demo' : ''}</span>
+    </div>
+  </article>
+);

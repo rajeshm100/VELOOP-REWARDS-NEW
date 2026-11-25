@@ -4,44 +4,19 @@ import { HexLevelBadge } from '../../assets/VeloopIllustrations';
 import { RoadmapLevelItem } from '../../data/levelDashboardData';
 import styles from './LevelRewardCard.module.css';
 
-interface LevelRewardCardProps {
+const STATUS_META = {
+  completed: { label: 'Completed', color: 'var(--vl-subtle-green)', Icon: Check },
+  current: { label: 'You Are Here', color: 'var(--vl-gold-bright)', Icon: Compass },
+  next: { label: 'Next Goal', color: 'var(--vl-soft-blue)', Icon: Target },
+  locked: { label: 'Locked', color: 'var(--vl-text-muted)', Icon: Lock },
+};
+
+export const LevelRewardCard: React.FC<{
   item: RoadmapLevelItem;
   isSelected: boolean;
   onSelect: (level: number) => void;
-}
-
-export const LevelRewardCard: React.FC<LevelRewardCardProps> = ({
-  item,
-  isSelected,
-  onSelect,
-}) => {
-  const statusConfig = {
-    completed: {
-      label: 'Completed',
-      icon: <Check size={13} aria-hidden="true" />,
-      cardClass: styles.completed,
-      statusClass: styles.statusCompleted,
-    },
-    current: {
-      label: 'You Are Here',
-      icon: <Compass size={13} aria-hidden="true" />,
-      cardClass: styles.current,
-      statusClass: styles.statusCurrent,
-    },
-    next: {
-      label: 'Next Goal',
-      icon: <Target size={13} aria-hidden="true" />,
-      cardClass: styles.next,
-      statusClass: styles.statusNext,
-    },
-    locked: {
-      label: 'Locked',
-      icon: <Lock size={13} aria-hidden="true" />,
-      cardClass: styles.locked,
-      statusClass: styles.statusLocked,
-    },
-  }[item.status];
-
+}> = ({ item, isSelected, onSelect }) => {
+  const { label, color, Icon } = STATUS_META[item.status];
   const rewardSummary = item.reward.secondaryType
     ? `+${item.reward.amount} ${item.reward.type} · +${item.reward.secondaryAmount} ${item.reward.secondaryType}`
     : `+${item.reward.amount} ${item.reward.type}`;
@@ -49,27 +24,19 @@ export const LevelRewardCard: React.FC<LevelRewardCardProps> = ({
   return (
     <button
       type="button"
-      className={`${styles.card} ${statusConfig.cardClass} ${isSelected ? styles.selected : ''}`}
+      className={`${styles.card} ${styles[item.status]} ${isSelected ? styles.selected : ''}`}
       onClick={() => onSelect(item.level)}
       aria-pressed={isSelected}
-      aria-label={`Level ${item.level} ${item.title}, ${statusConfig.label}, reward ${rewardSummary}`}
+      aria-label={`Level ${item.level} ${item.title}, ${label}, reward ${rewardSummary}`}
     >
-      <span className={`${styles.statusLine} ${statusConfig.statusClass}`}>
-        {statusConfig.icon}
-        <span>{statusConfig.label}</span>
+      <span className={styles.statusLine} style={{ color }}>
+        <Icon size={13} aria-hidden="true" />
+        <span>{label}</span>
       </span>
-
-      <HexLevelBadge level={item.level} size={62} variant={item.status} />
-
+      <HexLevelBadge level={item.level} size={60} variant={item.status} />
       <p className={styles.levelTitle}>{item.title}</p>
-
-      <span className={`${styles.xpReq} tabularNums`}>
-        {item.requiredXP.toLocaleString()} XP
-      </span>
-
-      <span className={`${styles.rewardLine} tabularNums`}>
-        {rewardSummary}
-      </span>
+      <span className={`${styles.xpReq} tabularNums`}>{item.requiredXP.toLocaleString()} XP</span>
+      <span className={`${styles.rewardLine} tabularNums`}>{rewardSummary}</span>
     </button>
   );
 };

@@ -19,17 +19,17 @@ export const LevelHero: React.FC<LevelHeroProps> = ({
   const { userName, todayStats, isDemo } = progression;
 
   return (
-    <section className={styles.hero} aria-labelledby="hero-heading">
+    <section className={`vlCard ${styles.hero}`} aria-labelledby="hero-heading">
       <div className={styles.heroGrid}>
         <div>
           <div className={styles.kickerRow}>
             <span>Good Morning, {userName}</span>
-            <span className={styles.separator} aria-hidden="true">·</span>
-            <span>VELOOP Rewards Progression</span>
+            <span aria-hidden="true">·</span>
+            <span>VELOOP Rewards</span>
             {isDemo && (
               <>
-                <span className={styles.separator} aria-hidden="true">·</span>
-                <span className={styles.demoLabel}>Demo Data</span>
+                <span aria-hidden="true">·</span>
+                <span style={{ color: 'var(--vl-text-muted)' }}>Demo Data</span>
               </>
             )}
           </div>
@@ -39,12 +39,11 @@ export const LevelHero: React.FC<LevelHeroProps> = ({
           </h1>
 
           <p className={styles.subtext}>
-            Track your XP velocity, preview your next tier unlock, and build momentum
-            through skill-based mini-games and verified earning activities.
+            Track your XP progression, preview next-level rewards, and build momentum through skill-based games and verified earning pathways.
           </p>
 
           <div className={styles.recommendation}>
-            <Compass size={18} className={styles.recIcon} aria-hidden="true" />
+            <Compass size={18} color="var(--vl-soft-blue)" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true" />
             <div>
               <span className={styles.recTitle}>Recommended for You</span>
               <p className={styles.recText}>{recommendationTip}</p>
@@ -52,23 +51,20 @@ export const LevelHero: React.FC<LevelHeroProps> = ({
           </div>
         </div>
 
-        <div className={styles.statsCol}>
-          <div className={styles.boostHeader}>
-            <h2 className={styles.boostTitle}>Today&apos;s Boost Summary</h2>
-            <span className={styles.demoLabel}>Session Overview</span>
-          </div>
+        <div>
+          <h2 className={styles.boostTitle}>Today&apos;s Boost Summary</h2>
 
           <div className={styles.boostGrid}>
             <div className={styles.boostItem}>
               <span className={styles.boostLabel}>XP Earned</span>
-              <span className={`${styles.boostValue} ${styles.boostGold} tabularNums`}>
+              <span className={`${styles.boostValue} tabularNums`} style={{ color: 'var(--vl-gold-bright)' }}>
                 +{todayStats.xpEarnedToday} XP
               </span>
             </div>
 
             <div className={styles.boostItem}>
               <span className={styles.boostLabel}>Tasks Done</span>
-              <span className={`${styles.boostValue} ${styles.boostGreen} tabularNums`}>
+              <span className={`${styles.boostValue} tabularNums`} style={{ color: 'var(--vl-subtle-green)' }}>
                 {todayStats.tasksCompleted} / {todayStats.tasksTotal}
               </span>
             </div>
@@ -81,20 +77,12 @@ export const LevelHero: React.FC<LevelHeroProps> = ({
             </div>
           </div>
 
-          <div className={styles.quickActions}>
-            <button
-              type="button"
-              className={styles.primaryCta}
-              onClick={onJumpToGame}
-            >
+          <div className="d-flex flex-wrap gap-2">
+            <button type="button" className="vlBtnGold" onClick={onJumpToGame}>
               Play Memory Match
               <ArrowRight size={16} aria-hidden="true" />
             </button>
-            <button
-              type="button"
-              className={styles.secondaryCta}
-              onClick={onJumpToEarn}
-            >
+            <button type="button" className="vlBtnGhost" onClick={onJumpToEarn}>
               Ways to Earn XP
             </button>
           </div>

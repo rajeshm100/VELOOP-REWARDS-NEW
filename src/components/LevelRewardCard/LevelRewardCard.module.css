@@ -1,20 +1,17 @@
 .card {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 8px;
-  padding: 16px 12px;
+  padding: 14px 12px;
   border-radius: var(--vl-radius-md);
   background: var(--vl-bg-surface);
   border: 1px solid var(--vl-border-subtle);
   cursor: pointer;
   width: 100%;
   color: var(--vl-text-primary);
-  transition: transform var(--vl-duration-fast) var(--vl-ease-out),
-    border-color var(--vl-duration-fast) var(--vl-ease-out),
-    background-color var(--vl-duration-fast) var(--vl-ease-out);
+  transition: transform 160ms var(--vl-ease-out), background-color 160ms var(--vl-ease-out);
 }
 
 .card:hover {
@@ -22,26 +19,11 @@
   background: var(--vl-bg-surface-hover);
 }
 
-.completed {
-  border-color: rgba(52, 211, 153, 0.3);
-}
-
-.current {
-  border-color: var(--vl-gold);
-  background: linear-gradient(180deg, rgba(229, 184, 91, 0.12) 0%, var(--vl-bg-surface) 100%);
-}
-
-.next {
-  border-color: rgba(96, 165, 250, 0.45);
-}
-
-.locked {
-  opacity: 0.78;
-}
-
-.selected {
-  box-shadow: 0 0 0 2px var(--vl-gold);
-}
+.completed { border-color: rgba(52, 211, 153, 0.3); }
+.current { border-color: var(--vl-gold); background: linear-gradient(180deg, rgba(229, 184, 91, 0.12) 0%, var(--vl-bg-surface) 100%); }
+.next { border-color: rgba(96, 165, 250, 0.45); }
+.locked { opacity: 0.78; }
+.selected { box-shadow: 0 0 0 2px var(--vl-gold); }
 
 .statusLine {
   display: inline-flex;
@@ -51,36 +33,19 @@
   font-weight: 600;
 }
 
-.statusCompleted {
-  color: var(--vl-subtle-green);
-}
-
-.statusCurrent {
-  color: var(--vl-gold-bright);
-}
-
-.statusNext {
-  color: var(--vl-soft-blue);
-}
-
-.statusLocked {
-  color: var(--vl-text-muted);
-}
-
 .levelTitle {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--vl-text-primary);
   margin: 0;
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
 .xpReq {
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   color: var(--vl-text-muted);
 }
 
 .rewardLine {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--vl-gold);
 }

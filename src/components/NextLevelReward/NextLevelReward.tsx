@@ -21,25 +21,18 @@ export const NextLevelReward: React.FC<NextLevelRewardProps> = ({
   isDemo,
 }) => {
   const [showPreview, setShowPreview] = useState(false);
-  const nextLvlStr = String(nextLevel).padStart(2, '0');
+  const nxtStr = String(nextLevel).padStart(2, '0');
   const isUnlocked = remainingXP === 0;
 
   return (
-    <article className={styles.card} aria-label="Next-Level Reward Spotlight">
+    <article className={`vlCard ${styles.card}`} aria-label="Next-Level Reward Spotlight">
       <div className={styles.header}>
-        <div className={styles.titleGroup}>
+        <div className="d-flex align-items-center gap-2">
           <span className={styles.eyebrow}>Next-Level Reward</span>
           <span aria-hidden="true" style={{ color: 'var(--vl-text-muted)' }}>·</span>
           <span className={styles.lockText}>
-            {isUnlocked ? (
-              <>
-                <Unlock size={13} aria-hidden="true" /> Ready
-              </>
-            ) : (
-              <>
-                <Lock size={13} aria-hidden="true" /> Locked
-              </>
-            )}
+            {isUnlocked ? <Unlock size={13} aria-hidden="true" /> : <Lock size={13} aria-hidden="true" />}
+            {isUnlocked ? 'Ready' : 'Locked'}
           </span>
         </div>
 
@@ -47,51 +40,38 @@ export const NextLevelReward: React.FC<NextLevelRewardProps> = ({
           title="Reward Information"
           ariaLabel="About Next-Level Reward"
           description="The displayed reward is associated with the next level according to the current reward configuration."
-          demoNote={isDemo ? 'Reward values shown are labeled development/demo figures.' : undefined}
+          demoNote={isDemo ? 'Values shown are labeled development/demo figures.' : undefined}
         />
       </div>
 
       <div className={styles.spotlight}>
-        <div className={`${styles.chestBox} ${showPreview ? styles.chestBoxRevealed : ''}`}>
-          <RewardChestIllustration size={84} locked={!isUnlocked} />
-        </div>
-
+        <RewardChestIllustration size={80} />
         <div>
-          <p className={`${styles.rewardAmount} tabularNums`}>
-            +{reward.amount.toLocaleString()} {reward.type}
-          </p>
+          <p className={`${styles.rewardAmount} tabularNums`}>+{reward.amount.toLocaleString()} {reward.type}</p>
           {reward.secondaryType && reward.secondaryAmount && (
-            <p className={`${styles.secondaryReward} tabularNums`}>
-              +{reward.secondaryAmount} {reward.secondaryType}
-            </p>
+            <p className={`${styles.secondaryReward} tabularNums`}>+{reward.secondaryAmount} {reward.secondaryType}</p>
           )}
-          <p className={styles.unlockPrompt}>
-            {isUnlocked
-              ? `Level ${nextLvlStr} reached — reward ready to claim`
-              : `Reach Level ${nextLvlStr} to unlock`}
+          <p className="mb-0" style={{ fontSize: '0.82rem', color: 'var(--vl-text-secondary)' }}>
+            {isUnlocked ? `Level ${nxtStr} reached — ready to claim` : `Reach Level ${nxtStr} to unlock`}
           </p>
         </div>
       </div>
 
       {showPreview && (
         <div className={styles.revealPanel}>
-          Includes +{reward.amount.toLocaleString()} {reward.type}
-          {reward.secondaryType && reward.secondaryAmount
-            ? ` and +${reward.secondaryAmount} ${reward.secondaryType}`
-            : ''}{' '}
-          credited to your VELOOP wallet upon reaching Level {nextLvlStr}
+          Credits +{reward.amount.toLocaleString()} {reward.type}
+          {reward.secondaryType && reward.secondaryAmount ? ` and +${reward.secondaryAmount} ${reward.secondaryType}` : ''} upon reaching Level {nxtStr}
           {isDemo ? ' (demo preview).' : '.'}
         </div>
       )}
 
       <div className={styles.footer}>
-        <span className={`${styles.progressMini} tabularNums`}>
-          {progressPercent}% unlocked{isDemo ? ' · Demo' : ''}
-        </span>
+        <span className="tabularNums">{progressPercent}% unlocked{isDemo ? ' · Demo' : ''}</span>
         <button
           type="button"
-          className={styles.previewBtn}
-          onClick={() => setShowPreview((prev) => !prev)}
+          className="vlBtnGhost"
+          style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+          onClick={() => setShowPreview((p) => !p)}
           aria-expanded={showPreview}
         >
           {showPreview ? 'Hide Details' : 'Preview Reward'}

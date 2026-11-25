@@ -1,222 +1,113 @@
 import React, { useMemo, useState } from 'react';
-import {
-  ArrowRight,
-  Award,
-  CalendarCheck,
-  CheckCircle2,
-  Compass,
-  Flame,
-  Gamepad2,
-  HelpCircle,
-  PlayCircle,
-  Search,
-  Sparkles,
-  Target,
-  Users,
-  X,
-} from 'lucide-react';
-import { WalletFlowIllustration } from '../../assets/VeloopIllustrations';
-import {
-  ActivityCategory,
-  EarningOpportunity,
-} from '../../data/levelDashboardData';
+import { ArrowRight, CheckCircle2, Compass, Flame, Gamepad2, PlayCircle, Sparkles, Target, Users, CalendarCheck, X } from 'lucide-react';
+import { ActivityCategory, EarningOpportunity } from '../../data/levelDashboardData';
 import styles from './EarnMoreXP.module.css';
 
-interface EarnMoreXPProps {
+const PATHWAY_ICONS: Record<string, React.ReactNode> = {
+  'play-earn': <Gamepad2 size={18} color="var(--vl-gold)" aria-hidden="true" />,
+  'watch-earn': <PlayCircle size={18} color="var(--vl-gold)" aria-hidden="true" />,
+  'daily-tasks': <CheckCircle2 size={18} color="var(--vl-gold)" aria-hidden="true" />,
+  'refer-earn': <Users size={18} color="var(--vl-gold)" aria-hidden="true" />,
+  'daily-challenge': <Target size={18} color="var(--vl-soft-blue)" aria-hidden="true" />,
+  'streak-xp': <Flame size={18} color="var(--vl-soft-blue)" aria-hidden="true" />,
+  'daily-mission': <Compass size={18} color="var(--vl-muted-purple)" aria-hidden="true" />,
+  'bonus-missions': <Sparkles size={18} color="var(--vl-muted-purple)" aria-hidden="true" />,
+  'weekly-quest': <CalendarCheck size={18} color="var(--vl-muted-purple)" aria-hidden="true" />,
+};
+
+export const EarnMoreXP: React.FC<{
   opportunities: EarningOpportunity[];
   remainingXP: number;
   nextLevel: number;
   onJumpToGame: () => void;
-  onClaimDemoPathwayXP: (
-    xp: number,
-    title: string,
-    category: ActivityCategory
-  ) => void;
-}
+  onClaimDemoPathwayXP: (xp: number, title: string, category: ActivityCategory) => void;
+}> = ({ opportunities, remainingXP, nextLevel, onJumpToGame, onClaimDemoPathwayXP }) => {
+  const [filter, setFilter] = useState<'all' | 'active' | 'upcoming'>('all');
+  const [selected, setSelected] = useState<EarningOpportunity | null>(null);
 
-type PathwayFilter = 'all' | 'active' | 'upcoming';
-
-function getPathwayIcon(iconKey: EarningOpportunity['iconKey']) {
-  switch (iconKey) {
-    case 'play':
-      return <Gamepad2 size={18} aria-hidden="true" />;
-    case 'watch':
-      return <PlayCircle size={18} aria-hidden="true" />;
-    case 'tasks':
-      return <CheckCircle2 size={18} aria-hidden="true" />;
-    case 'refer':
-      return <Users size={18} aria-hidden="true" />;
-    case 'daily_challenge':
-      return <Target size={18} aria-hidden="true" />;
-    case 'streak':
-      return <Flame size={18} aria-hidden="true" />;
-    case 'daily_mission':
-      return <Compass size={18} aria-hidden="true" />;
-    case 'bonus':
-      return <Sparkles size={18} aria-hidden="true" />;
-    case 'xp_challenge':
-      return <Award size={18} aria-hidden="true" />;
-    case 'weekly_quest':
-      return <CalendarCheck size={18} aria-hidden="true" />;
-    case 'quick_quiz':
-      return <HelpCircle size={18} aria-hidden="true" />;
-    case 'reward_hunt':
-      return <Search size={18} aria-hidden="true" />;
-  }
-}
-
-export const EarnMoreXP: React.FC<EarnMoreXPProps> = ({
-  opportunities,
-  remainingXP,
-  nextLevel,
-  onJumpToGame,
-  onClaimDemoPathwayXP,
-}) => {
-  const [filter, setFilter] = useState<PathwayFilter>('all');
-  const [selectedOpportunity, setSelectedOpportunity] =
-    useState<EarningOpportunity | null>(null);
-
-  const filteredList = useMemo(() => {
-    if (filter === 'active') {
-      return opportunities.filter((item) => item.badgeTag === 'active');
-    }
-    if (filter === 'upcoming') {
-      return opportunities.filter((item) => item.badgeTag !== 'active');
-    }
+  const list = useMemo(() => {
+    if (filter === 'active') return opportunities.filter((o) => o.badgeTag === 'active');
+    if (filter === 'upcoming') return opportunities.filter((o) => o.badgeTag !== 'active');
     return opportunities;
   }, [opportunities, filter]);
 
-  const handleCardClick = (item: EarningOpportunity) => {
-    if (item.actionType === 'scroll_game') {
-      onJumpToGame();
-      return;
-    }
-
-    setSelectedOpportunity(item);
-  };
-
-  const handleConfirmDemoAction = () => {
-    if (!selectedOpportunity || !selectedOpportunity.demoClaimXP) {
-      setSelectedOpportunity(null);
-      return;
-    }
-
+  const handleConfirmDemo = () => {
+    if (!selected?.demoClaimXP) return;
     const categoryMap: Record<string, ActivityCategory> = {
       'watch-earn': 'Daily Bonuses',
       'daily-tasks': 'Tasks',
       'refer-earn': 'Referrals',
     };
-
-    onClaimDemoPathwayXP(
-      selectedOpportunity.demoClaimXP,
-      `${selectedOpportunity.title} (Demo Action)`,
-      categoryMap[selectedOpportunity.id] ?? 'Tasks'
-    );
-    setSelectedOpportunity(null);
+    onClaimDemoPathwayXP(selected.demoClaimXP, `${selected.title} (Demo Action)`, categoryMap[selected.id] ?? 'Tasks');
+    setSelected(null);
   };
 
-  const nextLvlStr = String(nextLevel).padStart(2, '0');
+  const nxtStr = String(nextLevel).padStart(2, '0');
 
   return (
-    <section
-      id="earn-more"
-      className={styles.section}
-      aria-labelledby="earn-heading"
-    >
+    <section id="earn-more" className="vlCard" aria-labelledby="earn-heading">
       <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <WalletFlowIllustration size={50} />
-          <div>
-            <h2 id="earn-heading" className={styles.title}>
-              Earn More XP &amp; Rewards
-            </h2>
-            <p className={styles.subtitle}>
-              Ways to reach your next level — play, watch, complete daily tasks, refer friends, or preview upcoming concepts.
-            </p>
-          </div>
+        <div>
+          <h2 id="earn-heading" className="m-0 fw-bold" style={{ fontSize: '1.25rem' }}>
+            Earn More XP &amp; Rewards
+          </h2>
+          <p className="mt-1 mb-0" style={{ fontSize: '0.85rem', color: 'var(--vl-text-secondary)' }}>
+            Ways to reach your next level — play, watch, complete tasks, refer friends, or preview upcoming concepts.
+          </p>
         </div>
 
         <div className={`${styles.remainingBanner} tabularNums`}>
-          {remainingXP > 0
-            ? `${remainingXP.toLocaleString()} XP left to Level ${nextLvlStr}`
-            : `Level ${nextLvlStr} XP threshold met`}
+          {remainingXP > 0 ? `${remainingXP.toLocaleString()} XP left to Level ${nxtStr}` : `Level ${nxtStr} XP threshold met`}
         </div>
       </div>
 
-      <div className={styles.filterBar} role="tablist" aria-label="Filter earning pathways">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filter === 'all'}
-          className={`${styles.tabBtn} ${filter === 'all' ? styles.tabBtnActive : ''}`}
-          onClick={() => setFilter('all')}
-        >
-          All Pathways ({opportunities.length})
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filter === 'active'}
-          className={`${styles.tabBtn} ${filter === 'active' ? styles.tabBtnActive : ''}`}
-          onClick={() => setFilter('active')}
-        >
-          Supported Now
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={filter === 'upcoming'}
-          className={`${styles.tabBtn} ${filter === 'upcoming' ? styles.tabBtnActive : ''}`}
-          onClick={() => setFilter('upcoming')}
-        >
-          Coming Soon &amp; Concepts
-        </button>
+      <div className="d-flex flex-wrap gap-2 mb-3" role="tablist" aria-label="Filter earning pathways">
+        {(['all', 'active', 'upcoming'] as const).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            role="tab"
+            aria-selected={filter === tab}
+            className={`${styles.tabBtn} ${filter === tab ? styles.tabBtnActive : ''}`}
+            onClick={() => setFilter(tab)}
+          >
+            {tab === 'all' ? `All (${opportunities.length})` : tab === 'active' ? 'Supported Now' : 'Coming Soon & Concepts'}
+          </button>
+        ))}
       </div>
 
       <div className={styles.grid}>
-        {filteredList.map((item) => {
+        {list.map((item) => {
           const isConcept = item.badgeTag !== 'active';
-          const statusLabel =
+          const statusColor =
             item.badgeTag === 'active'
-              ? 'Supported'
+              ? 'var(--vl-subtle-green)'
               : item.badgeTag === 'coming_soon'
-                ? 'Coming Soon'
-                : 'Concept';
-          const statusClass =
-            item.badgeTag === 'active'
-              ? styles.statusActive
-              : item.badgeTag === 'coming_soon'
-                ? styles.statusSoon
-                : styles.statusConcept;
+                ? 'var(--vl-soft-blue)'
+                : 'var(--vl-muted-purple)';
 
           return (
-            <article
-              key={item.id}
-              className={`${styles.card} ${isConcept ? styles.cardConcept : ''}`}
-            >
+            <article key={item.id} className={styles.card}>
               <div>
-                <div className={styles.cardTop}>
-                  <span className={styles.iconCircle}>
-                    {getPathwayIcon(item.iconKey)}
-                  </span>
-                  <span className={`${styles.statusText} ${statusClass}`}>
-                    {statusLabel}
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <span>{PATHWAY_ICONS[item.id] ?? <Sparkles size={18} aria-hidden="true" />}</span>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 600, color: statusColor }}>
+                    {item.badgeTag === 'active' ? 'Supported' : item.badgeTag === 'coming_soon' ? 'Coming Soon' : 'Concept'}
                   </span>
                 </div>
-
-                <h3 className={`${styles.cardTitle} mt-3`}>{item.title}</h3>
-                <p className={styles.cardDesc}>{item.description}</p>
+                <h3 className="m-0 mb-1 fw-bold" style={{ fontSize: '1rem' }}>{item.title}</h3>
+                <p className="m-0" style={{ fontSize: '0.84rem', color: 'var(--vl-text-secondary)' }}>{item.description}</p>
               </div>
 
               <div className={styles.cardFooter}>
-                <span className={`${styles.xpPreview} tabularNums`}>
+                <span className="tabularNums fw-bold" style={{ fontSize: '0.82rem', color: 'var(--vl-gold-bright)' }}>
                   {item.xpPreview}
                 </span>
-
                 <button
                   type="button"
-                  className={isConcept ? styles.conceptBtn : styles.ctaBtn}
-                  onClick={() => handleCardClick(item)}
+                  className={isConcept ? 'vlBtnGhost' : 'vlBtnGold'}
+                  style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                  onClick={() => (item.actionType === 'scroll_game' ? onJumpToGame() : setSelected(item))}
                 >
                   {item.ctaLabel}
                   {!isConcept && <ArrowRight size={13} aria-hidden="true" />}
@@ -227,61 +118,33 @@ export const EarnMoreXP: React.FC<EarnMoreXPProps> = ({
         })}
       </div>
 
-      {selectedOpportunity && (
-        <div
-          className={styles.modalBackdrop}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="pathway-modal-title"
-        >
-          <div className={styles.modalDialog}>
-            <div className={styles.modalHeader}>
-              <h3 id="pathway-modal-title" className={styles.modalTitle}>
-                {selectedOpportunity.title}
-              </h3>
+      {selected && (
+        <div className={styles.modalBackdrop} role="dialog" aria-modal="true" aria-labelledby="pathway-modal-title">
+          <div className={`vlCard ${styles.modalDialog}`}>
+            <div className="d-flex align-items-center justify-content-between mb-2">
+              <h3 id="pathway-modal-title" className="m-0 fw-bold" style={{ fontSize: '1.1rem' }}>{selected.title}</h3>
               <button
                 type="button"
-                className={styles.closeBtn}
-                onClick={() => setSelectedOpportunity(null)}
-                aria-label="Close pathway preview"
+                className="vlBtnGhost"
+                style={{ padding: 4, border: 'none' }}
+                onClick={() => setSelected(null)}
+                aria-label="Close"
               >
                 <X size={18} aria-hidden="true" />
               </button>
             </div>
-
-            <p className={styles.modalBody}>
-              {selectedOpportunity.badgeTag === 'active'
-                ? `${selectedOpportunity.description} In the live VELOOP platform, this opens the verified ${selectedOpportunity.title} workflow. You can simulate earning ${selectedOpportunity.xpPreview} right now in demo mode.`
-                : `${selectedOpportunity.description} This earning concept is marked as "${selectedOpportunity.badgeTag === 'coming_soon' ? 'Coming Soon' : 'Concept'}" until approved and connected by the product team.`}
+            <p style={{ fontSize: '0.88rem', color: 'var(--vl-text-secondary)' }}>
+              {selected.badgeTag === 'active'
+                ? `${selected.description} Simulate earning ${selected.xpPreview} in demo mode.`
+                : `${selected.description} Marked as ${selected.badgeTag === 'coming_soon' ? 'Coming Soon' : 'Concept'} until approved.`}
             </p>
-
-            <div className={`${styles.modalRoute} tabularNums`}>
-              Target Route: {selectedOpportunity.route} · Status:{' '}
-              {selectedOpportunity.badgeTag === 'active'
-                ? 'Active Pathway (Demo Simulation)'
-                : selectedOpportunity.badgeTag === 'coming_soon'
-                  ? 'Coming Soon'
-                  : 'Proposed Concept'}
-            </div>
-
-            <div className={styles.modalActions}>
-              <button
-                type="button"
-                className={styles.conceptBtn}
-                onClick={() => setSelectedOpportunity(null)}
-              >
-                Close
-              </button>
-              {selectedOpportunity.badgeTag === 'active' &&
-                selectedOpportunity.demoClaimXP && (
-                  <button
-                    type="button"
-                    className={styles.primaryActionBtn}
-                    onClick={handleConfirmDemoAction}
-                  >
-                    Simulate +{selectedOpportunity.demoClaimXP} XP (Demo)
-                  </button>
-                )}
+            <div className="d-flex justify-content-end gap-2 mt-3">
+              <button type="button" className="vlBtnGhost" onClick={() => setSelected(null)}>Close</button>
+              {selected.badgeTag === 'active' && selected.demoClaimXP && (
+                <button type="button" className="vlBtnGold" onClick={handleConfirmDemo}>
+                  Simulate +{selected.demoClaimXP} XP (Demo)
+                </button>
+              )}
             </div>
           </div>
         </div>
